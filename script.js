@@ -1,4 +1,4 @@
-// NoteGenie2 - Main Application Logic
+// NoteGenie - Main Application Logic
 
 // Initialize Firebase when the page loads
 document.addEventListener('DOMContentLoaded', function() {

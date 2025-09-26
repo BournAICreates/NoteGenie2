@@ -1,4 +1,4 @@
-// Configuration file for NoteGenie2
+// Configuration file for NoteGenie
 // SECURITY: API keys are managed per user account
 
 // Firebase Configuration
@@ -12,7 +12,7 @@ const FIREBASE_CONFIG = {
 };
 
 // App ID for Firestore collections
-const APP_ID = "notegenie2";
+const APP_ID = "notegenie";
 
 const CONFIG = {
     // Google Gemini API Configuration - User-specific keys
@@ -34,7 +34,7 @@ const CONFIG = {
     WARNING_CHARACTERS: 80000,
     
     // App Settings
-    APP_NAME: 'NoteGenie2',
+    APP_NAME: 'NoteGenie',
     VERSION: '2.0.0'
 };
 

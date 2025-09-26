@@ -944,6 +944,19 @@ body {
 .chat-note-selector select {
     flex: 1;
     max-width: 300px;
+    font-weight: 600;
+    color: #ffffff;
+    background: #2d2d2d;
+    border: 2px solid #555;
+    border-radius: 8px;
+    padding: 0.5rem;
+}
+
+.chat-note-selector select option {
+    font-weight: 600;
+    color: #ffffff;
+    background: #2d2d2d;
+    padding: 0.5rem;
 }
 
 .chat-messages {
