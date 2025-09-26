@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Cloud Login</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .test-section {
+            background: white;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        .result {
+            background: #f8f9fa;
+            padding: 10px;
+            border-radius: 4px;
+            margin: 10px 0;
+            font-family: monospace;
+        }
+        .success { background: #d4edda; color: #155724; }
+        .error { background: #f8d7da; color: #721c24; }
+    </style>
+</head>
+<body>
+    <h1>🌐 Cloud Login Test</h1>
+    <p>This page tests the cloud-based user system to ensure cross-device login works.</p>
+
+    <div class="test-section">
+        <h3>Test User Registration</h3>
+        <button onclick="testRegister()">Register Test User</button>
+        <div id="registerResult" class="result"></div>
+    </div>
+
+    <div class="test-section">
+        <h3>Test User Login</h3>
+        <button onclick="testLogin()">Login Test User</button>
+        <div id="loginResult" class="result"></div>
+    </div>
+
+    <div class="test-section">
+        <h3>Test API Key Storage</h3>
+        <button onclick="testApiKey()">Save Test API Key</button>
+        <div id="apiKeyResult" class="result"></div>
+    </div>
+
+    <div class="test-section">
+        <h3>Test Data Sync</h3>
+        <button onclick="testDataSync()">Save Test Data</button>
+        <div id="dataSyncResult" class="result"></div>
+    </div>
+
+    <script src="api-config.js"></script>
+    <script>
+        let testUser = null;
+        let testToken = null;
+
+        async function testRegister() {
+            const resultDiv = document.getElementById('registerResult');
+            resultDiv.textContent = 'Registering test user...';
+            
+            try {
+                const userData = {
+                    name: 'Test User',
+                    email: 'test@example.com',
+                    password: 'testpassword123'
+                };
+                
+                const response = await MockAPI.register(userData);
+                testUser = response.user;
+                testToken = response.token;
+                
+                resultDiv.textContent = `✅ Registration successful!\nUser ID: ${testUser.id}\nEmail: ${testUser.email}`;
+                resultDiv.className = 'result success';
+            } catch (error) {
+                resultDiv.textContent = `❌ Registration failed: ${error.message}`;
+                resultDiv.className = 'result error';
+            }
+        }
+
+        async function testLogin() {
+            const resultDiv = document.getElementById('loginResult');
+            resultDiv.textContent = 'Testing login...';
+            
+            try {
+                const credentials = {
+                    email: 'test@example.com',
+                    password: 'testpassword123'
+                };
+                
+                const response = await MockAPI.login(credentials);
+                
+                resultDiv.textContent = `✅ Login successful!\nUser: ${response.user.name}\nToken: ${response.token.substring(0, 20)}...`;
+                resultDiv.className = 'result success';
+            } catch (error) {
+                resultDiv.textContent = `❌ Login failed: ${error.message}`;
+                resultDiv.className = 'result error';
+            }
+        }
+
+        async function testApiKey() {
+            const resultDiv = document.getElementById('apiKeyResult');
+            resultDiv.textContent = 'Testing API key storage...';
+            
+            try {
+                if (!testUser) {
+                    throw new Error('Please register a test user first');
+                }
+                
+                const testApiKey = 'test_api_key_12345';
+                await MockAPI.saveUserApiKey(testUser.id, testApiKey);
+                
+                // Retrieve the API key
+                const response = await MockAPI.getUserApiKey(testUser.id);
+                
+                resultDiv.textContent = `✅ API key storage successful!\nSaved: ${testApiKey}\nRetrieved: ${response.apiKey}`;
+                resultDiv.className = 'result success';
+            } catch (error) {
+                resultDiv.textContent = `❌ API key test failed: ${error.message}`;
+                resultDiv.className = 'result error';
+            }
+        }
+
+        async function testDataSync() {
+            const resultDiv = document.getElementById('dataSyncResult');
+            resultDiv.textContent = 'Testing data synchronization...';
+            
+            try {
+                if (!testUser) {
+                    throw new Error('Please register a test user first');
+                }
+                
+                const testData = {
+                    projects: [
+                        {
+                            id: 'test_project_1',
+                            name: 'Test Project',
+                            userId: testUser.id,
+                            createdAt: new Date().toISOString()
+                        }
+                    ],
+                    flashcards: [
+                        {
+                            id: 'test_flashcard_1',
+                            front: 'Test Question',
+                            back: 'Test Answer',
+                            userId: testUser.id
+                        }
+                    ]
+                };
+                
+                await MockAPI.saveUserData(testUser.id, testData);
+                
+                // Retrieve the data
+                const response = await MockAPI.getUserData(testUser.id);
+                
+                resultDiv.textContent = `✅ Data sync successful!\nProjects: ${response.data.projects.length}\nFlashcards: ${response.data.flashcards.length}`;
+                resultDiv.className = 'result success';
+            } catch (error) {
+                resultDiv.textContent = `❌ Data sync test failed: ${error.message}`;
+                resultDiv.className = 'result error';
+            }
+        }
+
+        // Auto-run tests on page load
+        window.addEventListener('load', () => {
+            console.log('🌐 Cloud Login Test Page Loaded');
+            console.log('📊 Available APIs:', {
+                MockAPI: typeof MockAPI,
+                CLOUD_API: typeof CLOUD_API
+            });
+        });
+    </script>
+</body>
+</html>
